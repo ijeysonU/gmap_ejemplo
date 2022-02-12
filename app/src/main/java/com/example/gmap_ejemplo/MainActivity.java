@@ -21,7 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
+
 import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap map;
     Fragment frg;
     ArrayList<MarkerInfo> lstMarkers;
-    public static final String URL1 = "https://my-json-server.typicode.com/ijeysonU/datamaps/db";
+    public static final String URL1 = "https://my-json-server.typicode.com/ijeysonU/datamaps1/db";
     Integer tipoVista;
     private Marker marker;
     @Override
@@ -65,8 +66,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
+        handleSSLHandshake();
         tipoVista = 1;
+        if (mapFragment != null) {
+            //InfoWindowCustom mapManager = new InfoWindowCustom(MainActivity.this);
+            //mapFragment.getMapAsync(mapManager);
+            //Spinner opcion =(Spinner)findViewById(R.id.typesMaps);
+            //mapManager.setSpinner(opcion);
+
+        } else {
+            //Alerts.MessageToast(MainActivity.this, "Esta nulo el Mapa");
+        }
         rq = Volley.newRequestQueue(this);
         jsonObjectRequest();
         mapFragment.getMapAsync(this);
@@ -160,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                        );
                                try {
-                                   Glide.with(MainActivity.this)
+                                   Picasso.get()
                                            .load(img)
                                            .into((ImageView)row.findViewById(R.id.imgUrl));
                                }catch(Exception ex){

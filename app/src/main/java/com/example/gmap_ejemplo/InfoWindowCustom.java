@@ -3,19 +3,27 @@ package com.example.gmap_ejemplo;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import org.w3c.dom.Text;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 import java.util.zip.Inflater;
 
-public class InfoWindowCustom implements GoogleMap.InfoWindowAdapter {
+public class InfoWindowCustom implements OnMapReadyCallback, GoogleMap.OnMapClickListener,
+        GoogleMap.InfoWindowAdapter,
+        GoogleMap.OnInfoWindowClickListener, AdapterView.OnItemSelectedListener {
     Context ctx;
     LayoutInflater inflater;
     private List<MarkerInfo> mkrList;
@@ -38,12 +46,13 @@ public class InfoWindowCustom implements GoogleMap.InfoWindowAdapter {
         ImageView img = (ImageView)v.findViewById(R.id.imgUrl);
         title.setText(marker.getTitle());
         stitle.setText(marker.getSnippet());
-
+        MarkerInfo mi = (MarkerInfo)marker.getTag();
         try {
-            Glide.with(ctx)
-                    .load(img)
-                    .into((ImageView)v.findViewById(R.id.imgUrl))
-            ;//(Drawable("https://evaladmin.uteq.edu.ec/adminimg/unknown.png"));
+            Picasso.get()
+                    .load(mi.getImg())
+                    //.placeholder(R.drawable.portada)
+                    //.error(R.drawable.caratula)
+                    .into(img, new MarkerCallback(marker));
         }catch(Exception ex){
 
         }
@@ -51,9 +60,55 @@ public class InfoWindowCustom implements GoogleMap.InfoWindowAdapter {
 
         return v;
     }
+    public class MarkerCallback implements Callback {
+        private Marker markerToRefresh;
+
+        public MarkerCallback(Marker markerToRefresh) {
+            this.markerToRefresh = markerToRefresh;
+        }
+
+        @Override
+        public void onSuccess() {
+            if (markerToRefresh != null && markerToRefresh.isInfoWindowShown()) {
+                markerToRefresh.hideInfoWindow();
+                markerToRefresh.showInfoWindow();
+            }
+        }
+
+        @Override
+        public void onError(Exception e) {
+            System.out.println("errorPicasso:" + e.getMessage());
+        }
+    }
+
 
     @Override
     public View getInfoContents(Marker marker) {
         return null;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 }
